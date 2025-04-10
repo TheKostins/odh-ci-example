@@ -11,5 +11,5 @@ class MessageModel(BaseModel):
     id: Mapped[int] = mapped_column(primary_key=True)
     author_nickname: Mapped[str] = mapped_column(String(100), nullable=False)
     content: Mapped[str] = mapped_column(nullable=False)
-    topic_id : Mapped[int] = mapped_column(ForeignKey("topics.id"), nullable=False)
+    topic_id : Mapped[int] = mapped_column(ForeignKey("topics.id", ondelete="CASCADE"), nullable=False)
     time_created: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
