@@ -1,7 +1,7 @@
 from model.MessageModel import MessageModel
 
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 class MessageRepository:
     def __init__(self, db: Session):
@@ -15,6 +15,10 @@ class MessageRepository:
             .order_by(MessageModel.time_created.desc())
             .limit(limit).offset(offset)
         ).scalars().all())
+
+    def get_count_by_topic(self, topic_id: int) -> int:
+        """Get total count of entities"""
+        return self.__db.query(func.count(MessageModel.id)).filter(MessageModel.topic_id==topic_id).scalar()
 
 
     def create(self, model: MessageModel) -> MessageModel:

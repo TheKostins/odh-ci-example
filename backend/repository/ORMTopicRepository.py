@@ -1,7 +1,7 @@
 from model.TopicModel import TopicModel
 from sqlalchemy.orm import Session
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 class TopicRepository:
 
@@ -11,6 +11,10 @@ class TopicRepository:
     def get(self, id: int) -> TopicModel | None:
         """Get entity by id"""
         return self.__db.get(TopicModel, id)
+
+    def get_total_count(self) -> int:
+        """Get total count of entities"""
+        return self.__db.query(func.count(TopicModel.id)).scalar()
 
     def get_list(self, limit: int = 100, offset: int = 0) -> list[TopicModel]:
         """Get list of entities"""

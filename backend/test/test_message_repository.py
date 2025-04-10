@@ -40,6 +40,18 @@ def test_get_list_by_topic(message_repository: MessageRepository, session: Sessi
     assert all(isinstance(message, MessageModel) for message in result)
     assert all(message.topic_id == topic.id for message in result)
 
+def test_get_count_by_topic(message_repository: MessageRepository, session: Session, topic: TopicModel):
+    # Given
+    messages = [MessageModel(author_nickname="anonymous",content=f"Message {i}", topic_id=topic.id) for i in range(5)]
+    session.add_all(messages)
+    session.commit()
+
+    # When
+    count = message_repository.get_count_by_topic(topic.id)
+
+    # Then
+    assert count == 5
+
 def test_create_message(message_repository: MessageRepository, session: Session, message: MessageModel):
     # When
     created_message = message_repository.create(message)

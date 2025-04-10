@@ -80,3 +80,16 @@ def test_search_by_name_alike(topic_repository: TopicRepository, session: Sessio
 
     # Then
     assert len(result) == 5
+
+
+def test_get_total_count(topic_repository: TopicRepository, session: Session):
+    # Given
+    topics = [TopicModel(name=f"Topic {i}") for i in range(5)]
+    session.add_all(topics)
+    session.commit()
+
+    # When
+    count = topic_repository.get_total_count()
+
+    # Then
+    assert count == 5
