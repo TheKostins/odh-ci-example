@@ -25,18 +25,8 @@ class TopicRepository:
         self.__db.refresh(model)
         return model
 
-    def update(self, model: TopicModel) -> TopicModel:
-        """Update entity"""
-        reattached = self.__db.merge(model)
-        self.__db.commit()
-        return reattached
-
-
-    def delete(self, id: int) -> bool:
-        """Delete entity"""
-        topic = self.get(id)
-        if topic is None:
-            return False
-        self.__db.delete(topic)
-        self.__db.commit()
-        return True
+    def search_by_name(self, name: str, limit: int = 10) -> list[TopicModel]:
+        """Search for topics by name"""
+        return list(self.__db.execute(
+            select(TopicModel).filter(TopicModel.name.ilike(f"%{name}%")).limit(limit)
+        ).scalars().all())

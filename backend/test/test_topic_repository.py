@@ -56,34 +56,27 @@ def test_create_topic(topic_repository: TopicRepository, session: Session, topic
     assert created_topic.id is not None
     assert created_topic.name == topic.name
 
-def test_update_topic(topic_repository: TopicRepository, session: Session, topic: TopicModel):
+def test_search_by_name(topic_repository: TopicRepository, session: Session):
     # Given
-    session.add(topic)
-    session.commit()
-    new_name = "Updated Topic"
-    topic.name = new_name
-
-    # When
-    updated_topic = topic_repository.update(topic)
-
-    # Then
-    assert updated_topic.name == new_name
-
-def test_delete_existing_topic(topic_repository: TopicRepository, session: Session, topic: TopicModel):
-    # Given
-    session.add(topic)
+    topics = [TopicModel(name=f"Topic {i}") for i in range(5)]
+    session.add_all(topics)
     session.commit()
 
     # When
-    result = topic_repository.delete(topic.id)
+    result = topic_repository.search_by_name("Topic 1")
 
     # Then
-    assert result is True
-    assert topic_repository.get(topic.id) is None
+    assert len(result) == 1
+    assert result[0].name == "Topic 1"
 
-def test_delete_non_existing_topic(topic_repository: TopicRepository):
+def test_search_by_name_alike(topic_repository: TopicRepository, session: Session):
+    # Given
+    topics = [TopicModel(name=f"Topic {i}") for i in range(5)]
+    session.add_all(topics)
+    session.commit()
+
     # When
-    result = topic_repository.delete(999)
+    result = topic_repository.search_by_name("opic")
 
     # Then
-    assert result is False
+    assert len(result) == 5

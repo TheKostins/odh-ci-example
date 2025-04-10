@@ -7,10 +7,6 @@ class MessageRepository:
     def __init__(self, db: Session):
         self.__db = db
 
-    def get(self, id: int) -> MessageModel | None:
-        """Get entity by id"""
-        return self.__db.get(MessageModel, id)
-
     def get_list_by_topic(self, topic_id: int, limit: int = 100, offset: int = 0) -> list[MessageModel]:
         """Get list of entities"""
         return list(self.__db.execute(
@@ -27,19 +23,3 @@ class MessageRepository:
         self.__db.commit()
         self.__db.refresh(model)
         return model
-
-    def update(self, model: MessageModel) -> MessageModel:
-        """Update entity"""
-        reattached = self.__db.merge(model)
-        self.__db.commit()
-        return reattached
-
-
-    def delete(self, id: int) -> bool:
-        """Delete entity"""
-        topic = self.get(id)
-        if topic is None:
-            return False
-        self.__db.delete(topic)
-        self.__db.commit()
-        return True
