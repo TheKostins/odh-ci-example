@@ -1,4 +1,3 @@
-from model.TopicModel import TopicModel
 from model.MessageModel import MessageModel
 
 from sqlalchemy.orm import Session
@@ -12,11 +11,11 @@ class MessageRepository:
         """Get entity by id"""
         return self.__db.get(MessageModel, id)
 
-    def get_list_by_topic(self, topic: TopicModel, limit: int = 100, offset: int = 0) -> list[MessageModel]:
+    def get_list_by_topic(self, topic_id: int, limit: int = 100, offset: int = 0) -> list[MessageModel]:
         """Get list of entities"""
         return list(self.__db.execute(
             select(MessageModel)
-            .filter(MessageModel.topic_id==topic.id)
+            .filter(MessageModel.topic_id==topic_id)
             .order_by(MessageModel.time_created.desc())
             .limit(limit).offset(offset)
         ).scalars().all())

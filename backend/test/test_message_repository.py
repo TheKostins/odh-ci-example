@@ -54,7 +54,7 @@ def test_get_list_by_topic(message_repository: MessageRepository, session: Sessi
     session.commit()
 
     # When
-    result = message_repository.get_list_by_topic(topic)
+    result = message_repository.get_list_by_topic(topic.id)
 
     # Then
     assert len(result) == 5
