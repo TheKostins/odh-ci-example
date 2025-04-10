@@ -21,13 +21,18 @@ def test_get_list_by_topic(message_service, mock_message_repository):
         MessageModel(author_nickname="User2", content="Message 2", topic_id=topic_id)
     ]
     mock_message_repository.get_list_by_topic.return_value = mock_messages
+    mock_message_repository.get_count_by_topic.return_value = len(mock_messages)
 
     # When
     result = message_service.get_list_by_topic(topic_id, limit, offset)
 
     # Then
-    assert result == mock_messages
+    assert result.items == mock_messages
+    assert result.limit == limit
+    assert result.offset == offset
+    assert result.total == len(mock_messages)
     mock_message_repository.get_list_by_topic.assert_called_once_with(topic_id, limit, offset)
+    mock_message_repository.get_count_by_topic.assert_called_once_with(topic_id)
 
 def test_post_message(message_service, mock_message_repository):
     # Given

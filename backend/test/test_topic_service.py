@@ -52,13 +52,19 @@ def test_get_list(topic_service, mock_topic_repository):
     # Given
     mock_topics = [TopicModel(name="Test Topic 1"), TopicModel(name="Test Topic 2")]
     mock_topic_repository.get_list.return_value = mock_topics
+    mock_topic_repository.get_total_count.return_value = 2
 
     # When
     result = topic_service.get_list(limit=2, offset=0)
 
     # Then
-    assert result == mock_topics
+    assert result.items == mock_topics
+    assert result.limit == 2
+    assert result.offset == 0
+    assert result.total == 2
+
     mock_topic_repository.get_list.assert_called_once_with(2, 0)
+    mock_topic_repository.get_total_count.assert_called_once()
 
 def test_search_by_name(topic_service, mock_topic_repository):
     # Given
