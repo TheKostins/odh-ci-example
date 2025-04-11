@@ -1,6 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
+from starlette.routing import _DefaultLifespan
+
 
 from main import app  # Assuming your FastAPI app is in backend/main.py
 from config.database import get_session
@@ -16,6 +18,7 @@ def override_get_session(session: Session):
 
 @pytest.fixture(scope="module")
 def client():
+    app.router.lifespan_context = _DefaultLifespan(app.router)
     with TestClient(app) as c:
         yield c
 
