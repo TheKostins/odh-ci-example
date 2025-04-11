@@ -1,10 +1,14 @@
 <script lang="ts">
 	import InputWithButton from '../components/InputWithButton.svelte';
-	import type { PageProps } from './$types';
-	import type { Topic } from '../api/types.ts';
-	let { data }: PageProps = $props();
+	import type { Topic, TopicsResponse } from '../api/types.ts';
+	import { onMount } from 'svelte';
 
-	let topics = $state(data.topics.items);
+	let topics = $state([] as Topic[]);
+	onMount(async () => {
+		const response = await fetch('/api/v1/topics');
+		const data = (await response.json()) as TopicsResponse;
+		topics = data.items;
+	});
 
 	const handleSearch = (name: string) => {
 		if (name) {
@@ -15,7 +19,12 @@
 					topics = data;
 				});
 		} else {
-			topics = data.topics.items;
+			fetch(`/api/v1/topics1`)
+				.then((response) => response.json())
+				.then((data) => data as TopicsResponse)
+				.then((data) => {
+					topics = data.items;
+				});
 		}
 	};
 

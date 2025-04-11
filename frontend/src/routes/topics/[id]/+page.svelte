@@ -1,10 +1,20 @@
 <script lang="ts">
-	import type { MessagesResponse } from '../../../api/types';
+	import { onMount } from 'svelte';
+	import type { MessagesResponse, Topic } from '../../../api/types';
 	import MessageComponent from '../../../components/MessageComponent.svelte';
-	import type { PageProps } from './$types';
-	const { data }: PageProps = $props();
-	const topic = data.topic;
-	let messages = $state(data.messages);
+	import { page } from '$app/state';
+	const topicId = page.params.id;
+
+	let messages = $state({} as MessagesResponse);
+	let topic = $state({} as Topic);
+
+	onMount(async () => {
+		const topicResponse = await fetch(`/api/v1/topics/${topicId}`);
+		topic = await topicResponse.json();
+
+		const messagesResponse = await fetch(`/api/v1/topics/${topicId}/messages`);
+		messages = await messagesResponse.json();
+	});
 
 	let messageContents = $state('');
 	let nickname = $state('');
