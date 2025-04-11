@@ -2,7 +2,6 @@ import pytest
 from unittest.mock import MagicMock
 from service.TopicService import TopicService
 from model import TopicModel
-from service.Errors import NotFountError
 
 @pytest.fixture
 def mock_topic_repository():
@@ -42,8 +41,7 @@ def test_get_topic_not_found(topic_service, mock_topic_repository):
     mock_topic_repository.get.return_value = None
 
     # When
-    with pytest.raises(NotFountError):
-        topic_service.get_topic(1)
+    assert topic_service.get_topic(1) == None
 
     # Then
     mock_topic_repository.get.assert_called_once_with(1)

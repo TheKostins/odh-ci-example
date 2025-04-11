@@ -1,6 +1,5 @@
 from model import TopicModel
 from repository.ORMTopicRepository import TopicRepository
-from service.Errors import NotFountError
 from .Page import Page
 
 class TopicService:
@@ -12,11 +11,8 @@ class TopicService:
         topic = self.__topic_repository.create(topic)
         return topic
 
-    def get_topic(self, id: int) -> TopicModel:
-        topic = self.__topic_repository.get(id)
-        if topic is None:
-            raise NotFountError(f"Topic with id {id} not found")
-        return topic
+    def get_topic(self, id: int) -> TopicModel | None:
+        return self.__topic_repository.get(id)
 
     def get_list(self, limit: int = 100, offset: int = 0) -> Page[TopicModel]:
         items = self.__topic_repository.get_list(limit, offset)

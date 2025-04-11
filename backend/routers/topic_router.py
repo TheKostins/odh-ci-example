@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends
 
 from dependencies.deps import get_message_service, get_topic_service
@@ -29,7 +29,7 @@ def get_topics(
         return [TopicSchema.from_orm(topic) for topic in topics]
     else:
         page = topic_service.get_list(limit=limit, offset=offset)
-        return create_page_schema_from_page(page, TopicSchema.from_orm)
+        return create_page_schema_from_page(page, TopicSchema.model_validate)
 
 
 @topic_router.get("/topics/{topic_id}")
@@ -41,7 +41,9 @@ def get_topic(
     Get a specific topic by its ID.
     """
     topic = topic_service.get_topic(topic_id)
-    return TopicSchema.from_orm(topic)
+    if topic is None:
+        raise HTTPException(status_code=404, detail="Topic not found")
+    return TopicSchema.model_validate(topic)
 
 @topic_router.post("/topics")
 def create_topic(
@@ -52,7 +54,7 @@ def create_topic(
     Create a new topic.
     """
     created_topic = topic_service.create_topic(topic.name)
-    return TopicSchema.from_orm(created_topic)
+    return TopicSchema.model_validate(created_topic)
 
 
 @topic_router.get("/topics/{topic_id}/messages")
@@ -66,7 +68,7 @@ def get_messages_by_topic(
     Get messages for a specific topic.
     """
     page = message_service.get_list_by_topic(topic_id, limit=limit, offset=offset)
-    return create_page_schema_from_page(page, MessageSchema.from_orm)
+    return create_page_schema_from_page(page, MessageSchema.model_validate)
 
 
 @topic_router.post("/topics/{topic_id}/messages")
@@ -83,4 +85,4 @@ def post_message(
         content=message.content,
         topic_id=topic_id,
     )
-    return MessageSchema.from_orm(created_message)
+    return MessageSchema.model_validate(created_message)
