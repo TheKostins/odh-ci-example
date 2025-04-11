@@ -1,0 +1,31 @@
+name: Run backend tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.6.14"
+
+      - name: install python
+        working-directory: ./backend
+        run: uv python install
+
+      - name: install dependencies
+        working-directory: ./backend
+        run: uv sync --frozen
+
+      - name: run tests
+        working-directory: ./backend
+        run: uv run pytest
