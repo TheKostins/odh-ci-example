@@ -1,4 +1,4 @@
-name: Run backend tests lol`
+name: Run backend tests
 on:
   push:
     branches:
